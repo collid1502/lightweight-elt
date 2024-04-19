@@ -94,7 +94,87 @@ Create a new, empty, terraform file in the snowflake subfolder. Here, we will wr
 # ensure you are in the snowflake sub-folder
 cd snowflake
 
-# once there, create a new terraform file
+# once there, create a new terraform files
+touch sf_provider.tf 
 touch snowflake_infra_setup.tf
+touch snowflake_vars.tf
+touch snowflake_roles.tf 
 ```
 
+*Reminder, some of the variable values are being sourced from environment variables on my machine via the TF_VAR_ prefix. You would need to do the same or edit the terraform code*
+
+#### sf_provider.tf
+
+This file is needed in order for terraform to collect the required installs that allow it to work with snowflake and provision resources. This IS A MUST
+
+#### snowflake_infra_setup.tf
+
+In this file, we actually create infrastructure with our service account that was setup. This infrastructure will be used in the ELT process being created through this project.
+
+#### snowflake_vars.tf
+
+In this file, we specify our variables that terraform will use. Housing these in a separate file allows a clean, organised way for us to manage terraform code, and find things quickly when we need to make changes.
+
+You can view the file, which contains comments/notes, to see what variables we require in this project.
+
+#### snowflake_roles.tf 
+
+This file creates the different roles, and priviliges of those roles, in using the infra that has been created above
+
+
+When all these files have been set up, we now need to look at executing our terraform code
+
+### Executing Terraform
+
+First, we need to make sure we are in the folder where all the infrastructure terraform files are
+
+```
+cd infrastructure/snowflake
+```
+
+Once here, run:
+
+```
+terraform init
+```
+
+This will initialse the terraform project for the first time. You should get green writing back on the console to indicate of it has been successful or not.
+
+Next, run
+
+```
+terraform plan
+```
+
+This will build out a plan, identify any changes to existing infrastructure and warn you of any errors that Terraform can identify from your code. <br>
+Note, that because the snowflake-terraform provider is changing a lot, you may get warnings about some resources becoming deprecated, so keep an eye on versions you are using alongside code, according to the online docs.
+
+When the plan has been established without any errors called out, and you have reviewed it, it's time to execute!
+
+```
+terraform apply
+
+# to auto-approve and not required a prompted yes
+terraform apply -auto-approve
+```
+
+when prompted, enter `yes` to enable the build.
+
+If it all goes to plan, you should see the green complete message on your terminal. Now, you can log into the console and check if the resources you just created, do indeed exist as planned!
+
+### Terraform state & other files
+
+Be careful not to save your terraform state & other key files to your open github repos.<br>
+Ideally, put these into a `.gitignore` file, and in production settings, you would likely want to back up your `terraform.tfstate` files to AWS S3 or somewhere similar!
+
+### Destroying resources
+
+Obviously, if you are looking to just practice and not spend load of money, or even in some work settings, you may need to tear down resources. This can be done by
+
+```
+terraform destroy
+```
+
+**WARNING**
+
+This will destroy all resources! So be careful with what you are doing. Follow documentation online when required.

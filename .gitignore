@@ -1,0 +1,4 @@
+infrastructure/snowflake/.terraform
+infrastructure/snowflake/.terraform.lock.hcl
+infrastructure/snowflake/terraform.tfstate
+infrastructure/snowflake/terraform.tfstate.backup
