@@ -49,7 +49,7 @@ If all has worked well, you should see the version you installed echoed back to 
 
 Firstly, this project obviously assumes you have a snowflake account handy, and the relevant admin rights to perform infra provisioning as required. If looking to set up your own snowflake account, it's pretty easy. This project doesn't cover that, but you'll be able to get up and running online within 10 minutes after visiting their site. Also, at the time of writing, snowflake were offering **FREE** credits for up to 30 days after sign up (or c.$400) whichever hits first.
 
-Check out the `snowflake_create_role_example.sql` file for an example of setting up another user (a service account) and a role which can create and manage infrastructure via Terraform or the Snowflake Console. You ideally don't want to use AccountAdmin details, so you can avoid these ever being accidentally leaked.
+Check out the `snowflake/snowflake_create_role_example.sql` file for an example of setting up another user (a service account) and a role which can create and manage infrastructure via Terraform or the Snowflake Console. You ideally don't want to use AccountAdmin details, so you can avoid these ever being accidentally leaked.
 
 Anyways, back to the root of this project:
 

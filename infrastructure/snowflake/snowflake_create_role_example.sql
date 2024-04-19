@@ -1,3 +1,6 @@
+-- ensure your account admin
+USE ROLE ACCOUNTADMIN;
+
 -- Create a role below account admin, but that has privs to set up infrastructure
 CREATE OR REPLACE ROLE infra_admin 
 COMMENT = 'Role to manage infrastructure from Terraform';
@@ -7,6 +10,9 @@ COMMENT = 'Role to manage infrastructure from Terraform';
 -- not to risk leaking the credentials. AccountAdmin stays as the master account that cannot
 -- be altered by another role 
 GRANT ALL ON ACCOUNT TO ROLE infra_admin ; 
+
+-- grant use of the compute_wh default 
+GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE infra_admin ;
 
 -- create a service account user for managing the infra via the infra_admin role
 CREATE OR REPLACE USER sf_infra_srv_user
