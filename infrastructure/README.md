@@ -11,7 +11,7 @@ So, let's move into some steps for setting up Terraform!
 
 ## Setup
 
-### 1. Ensure Terraform is installed on your development machine
+### 1.1 Ensure Terraform is installed on your development machine
 
 You can start by using the CLI to download the a version of Terraform
 ```
@@ -44,6 +44,45 @@ terraform -version
 ```
 If all has worked well, you should see the version you installed echoed back to your terminal. In this example, v1.2.7
 
+### 1.2 Installing Terraform Docs
+
+Terraform docs is a handy command line tool that allows you to auto generate documentation from your terraform code. It can be installed as follows:
+
+```
+cd ~/temp 
+
+# download terraform docs package 
+wget https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz
+```
+Once, downloaded into the temp folder, extract the binary.
+
+```
+tar -xzf terraform-docs-v0.16.0-linux-amd64.tar.gz
+```
+
+Move the binary into your **PATH** like above in **1.1** 
+
+```
+sudo mv terraform-docs /usr/local/bin/
+``` 
+
+Verify the install 
+
+```
+terraform-docs --version
+```
+
+which should produce the downloaded version back to you, and at that point, feel free to clean uop the ~/temp folder to remove unwanted items
+
+```
+# force (-f) and recursive (-r) to clear all files in that folder
+rm -f -r ~/temp/*
+
+# should now be empty
+ls -a 
+``` 
+
+And that is the Terraform installation complete! 
 
 ### 2. Terraform for Snowflake
 
