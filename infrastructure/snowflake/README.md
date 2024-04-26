@@ -2,7 +2,9 @@
 
 In this example project, we will be using Terraform to manage Snowflake infrastructure, however, below is some guidance on setting up SnowSQL CLI client, so that you can interact with your snowflake resources from your machine, without logging into the console.
 
-### Setup
+Terraform infrastructure guidance will be further down the notes.
+
+### Setup SnowCLI
 
 Assuming you already have a snowflake account, and login credentials, let's get started!
 
@@ -90,3 +92,10 @@ This will then execute the query (the `-q` option) and return a result with hell
 You can actually also log into snowflake, and view this query on your warehosue query history
 
 Now, you are all set for any Snowflake command line activity, and know that you have working credentials for a remote connection from your machine!
+
+-------------------------------------------
+
+## Terraform Infrastructure
+
+add details here ... 
+
