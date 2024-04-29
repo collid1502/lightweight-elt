@@ -14,6 +14,7 @@ variable "snowflake_password" {
 variable "snowflake_role" {
   description = "Role to use in Snowflake"
   type        = string
+  default     = "infra_admin" // This is the role-group that the user has sufficient privs with to build infra
 }
 
 variable "snowflake_account" {

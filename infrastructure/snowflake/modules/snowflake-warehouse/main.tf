@@ -1,10 +1,4 @@
 # module for creating snowflake warehouses
-provider "snowflake" {
-  username = var.snowflake_user
-  password = var.snowflake_password
-  account  = var.snowflake_account
-  role     = var.snowflake_role
-}
 
 resource "snowflake_warehouse" "create_warehouse" {
   name                         = var.warehouse_name
