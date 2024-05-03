@@ -158,3 +158,17 @@ Now, if you log into Snowflake UI directly, you can check that these new roles a
 
 ### Snowflake Objects
 
+We have created a variety of snowflake objects at this point:
+
+* hold1
+* hold2
+* hold3
+
+Here are those objects
+
+<holder for picture>
+
+We have also assigned specific privileges to the roles above, against the created objects. <br>
+We can explore those on each object.
+
+... add more details here 
