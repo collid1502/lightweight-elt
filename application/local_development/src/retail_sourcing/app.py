@@ -6,9 +6,11 @@ combine, basic DQ checks & stage RAW data into Snwoflake via Snowpark
 # Imports
 from data_sources.customers import get_customers
 from data_sources.transactions import get_transactions
+from data_sources.uk_postcodes import source_uk_postcodes 
 import os 
 import sys 
 import logging 
+from functools import wraps
 import yaml 
 from datetime import date, timedelta
 from snowflake.snowpark.session import Session 
@@ -45,7 +47,7 @@ def logger(output: str = 'terminal', level: str = 'INFO', filename: str = None) 
     logger.addHandler(handler) 
     return logger 
 
-
+   
 # Create function to return a snowpark object for remote interaction with snowflake 
 def getSnowpark(snowflake_conn_details: dict) -> object:
     """Function that returns an object which contain the connection to remote snowflake instance via Snowpark
@@ -60,15 +62,18 @@ def getSnowpark(snowflake_conn_details: dict) -> object:
         raise TypeError("Snowflake connection details not provided in dictionary") 
     snowpark = Session.builder.configs(snowflake_conn_details).create() 
     return snowpark 
+    
 
 
+    
 
 
 # run the ETL application 
 if __name__ == "__main__":
 
     # configure logging 
-    log = logger() # use defaults 
+    log = logger(output='terminal', level='INFO', filename=None) # use defaults 
+    log.info("=" * 150) 
     log.info("Running ETL process for Retail Customer Purchases") 
 
     # read in configurations from `service_configs.yml`
@@ -82,32 +87,32 @@ if __name__ == "__main__":
         snowflake_connection_details['password'] = os.getenv('etl-serv_password')
         log.info("Snowpark configuration details set")
     except Exception as e:
-        log.error(e)
-        raise e
-
-    # Collect customer data 
-    log.info("Source customer data from API extraction ...")
-    try:
-        customers_df = get_customers(seed=87654) # Leave this seed hardcoded, so customers are always the same for this example project
-        log.info("Customer data sourced")
-    except Exception as e:
-        log.error(e)
+        log.error(e, exc_info=True) # includes traceback info to log
         raise e
     
-    # Collect transactions data
-    log.info("Source transactions data from API extraction ...")
+    # Collect data sources 
     try:
+        # customers
+        log.info("Source customer data from API extraction ...")
+        customers_df = get_customers(seed=87654) # Leave this seed hardcoded, so customers are always the same for this example project
+        log.info(f"Customer data sourced. Result dataframe has {len(customers_df)} rows")
+        # postcodes
+        log.info("Source UK Postcode data from API extraction ...") 
+        postcode_df = source_uk_postcodes()
+        log.info(f"Postcode data sourced. Result dataframe has {len(postcode_df)} rows")
+        # transactions
+        log.info("Source transactions data from API extraction ...")
         today = date.today() # use today's date to generate the values that will build fake txn data 
         tomorrow = (date.today() + timedelta(days=1)) 
-        txns_df = get_transactions(today, tomorrow) 
-        log.info("Transactions data sourced")
+        txns_df = get_transactions(today, tomorrow)
+        log.info(f"Transactions data sourced. Result dataframe has {len(txns_df)} rows")
+        # done 
     except Exception as e:
-        log.error(e)
+        log.error(e, exc_info=True) # includes traceback info to log
         raise e
-
-    # Collect UK ONS Postcode Data
-
-
+    
+    # combine `customers` & `postcodes` together 
+    
 
     
 
