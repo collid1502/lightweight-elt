@@ -133,6 +133,8 @@ if __name__ == "__main__":
         start=datetime.date(year=2023, month=10, day=15),
         end=datetime.date(year=2023, month=10, day=16)
     )
+    pd.set_option('display.max_colwidth', None)
+    print(txnDataOut.head())
     # write data out
-    outPath = f"./dummy_txns.csv"
-    txnDataOut.to_csv(outPath, sep='\t', encoding='utf-8', index=False)
+    #outPath = f"./dummy_txns.csv"
+    #txnDataOut.to_csv(outPath, sep='\t', encoding='utf-8', index=False)

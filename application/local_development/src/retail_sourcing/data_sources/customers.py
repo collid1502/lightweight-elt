@@ -68,5 +68,7 @@ def get_customers(seed: int) -> pd.DataFrame:
 
 if __name__ == "__main__":
     custData = get_customers(seed=12345) 
-    outPath = r"./customerMasterExtract.csv"
-    custData.to_csv(outPath, sep='\t', encoding='utf-8', index=False)
+    pd.set_option('display.max_colwidth', None)
+    print(custData.head())
+    #outPath = r"./customerMasterExtract.csv"
+    #custData.to_csv(outPath, sep='\t', encoding='utf-8', index=False)

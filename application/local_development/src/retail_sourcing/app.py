@@ -10,9 +10,10 @@ from data_sources.uk_postcodes import source_uk_postcodes
 import os 
 import sys 
 import logging 
-from functools import wraps
 import yaml 
 from datetime import date, timedelta
+import pandas as pd 
+import duckdb as ddb 
 from snowflake.snowpark.session import Session 
 
 
@@ -64,13 +65,52 @@ def getSnowpark(snowflake_conn_details: dict) -> object:
     return snowpark 
     
 
+def merge_customers_postcodes(cust_df: pd.DataFrame, postcode_df: pd.DataFrame) -> pd.DataFrame:
+    """Take the input dataframes of customer data & ONS postcode data, merge them together
 
+    Args:
+        cust_df (pd.DataFrame): pandas df holding customer extract from CSV
+        postcode_df (pd.DataFrame): pandas df holding postcode extract from ONS 
+
+    Returns:
+        pd.DataFrame: a merged dataframe of the two inputs joined by `postcode` 
+    """
+    output_df = (
+        ddb.query(
+        """
+        SELECT 
+            TB1.CUSTOMERID, TB1.FIRSTNAME, TB1.LASTNAME, TB1.REWARDSMEMBER, TB1.EMAILADDRESS, 
+            TB1.PROFESSION, TB1.DOB, TB1.CUSTOMERJOINED, 
+            TB1.POSTCODE,
+            TB2.LATITUDE, TB2.LONGITUDE, TB2.COUNTRY, TB2.CONSTITUENCY, TB2.REGION, 
+            TB2.INTRODUCED, TB2.TERMINATED, TB2."LAST UPDATED" AS POSTCODE_LAST_UPDATED
+        FROM 
+            cust_df AS TB1
+        LEFT JOIN 
+            postcode_df AS TB2
+        ON 
+        UPPER(REPLACE(TB1.POSTCODE, ' ', '')) = UPPER(REPLACE(TB2.POSTCODE, ' ', ''))
+        """
+        ).to_df() 
+    )
+    return output_df
+
+
+def write_to_snowflake(snowpark_df: object, snowflake_schema: str, snowflake_table: str, mode: str = "overwrite"):
+    """Writes a snowpark dataframe to a snowflake table 
+
+    Args:
+        snowpark_df (object): the dataframe to save
+        snowflake_schema (str): schema to target
+        snowflake_table (str): tabke to target
+    """
+    snowpark_df.write.mode(mode).save_as_table(f"{snowflake_schema}.{snowflake_table}")
     
 
 
 # run the ETL application 
 if __name__ == "__main__":
-
+    #pd.set_option('display.max_colwidth', None)
     # configure logging 
     log = logger(output='terminal', level='INFO', filename=None) # use defaults 
     log.info("=" * 150) 
@@ -84,39 +124,79 @@ if __name__ == "__main__":
         snowflake_connection_details = configs['snowflake'] # reads the snowflake configs as a dict object 
         # use OS to get environment variables, and update account & password with hidden values 
         snowflake_connection_details['account'] = os.getenv('snowflake_account')
-        snowflake_connection_details['password'] = os.getenv('etl-serv_password')
+        snowflake_connection_details['password'] = os.getenv('etl_serv_password')
         log.info("Snowpark configuration details set")
     except Exception as e:
         log.error(e, exc_info=True) # includes traceback info to log
         raise e
     
-    # Collect data sources 
+    # Collect data sources & run basic DQ checks with Cuallee package
     try:
         # customers
         log.info("Source customer data from API extraction ...")
         customers_df = get_customers(seed=87654) # Leave this seed hardcoded, so customers are always the same for this example project
         log.info(f"Customer data sourced. Result dataframe has {len(customers_df)} rows")
+
+        # DQ
+        # do some data quality here 
+
         # postcodes
         log.info("Source UK Postcode data from API extraction ...") 
         postcode_df = source_uk_postcodes()
         log.info(f"Postcode data sourced. Result dataframe has {len(postcode_df)} rows")
+
+        # DQ
+        # do some data quality here
+
         # transactions
         log.info("Source transactions data from API extraction ...")
         today = date.today() # use today's date to generate the values that will build fake txn data 
         tomorrow = (date.today() + timedelta(days=1)) 
         txns_df = get_transactions(today, tomorrow)
         log.info(f"Transactions data sourced. Result dataframe has {len(txns_df)} rows")
+
+        # DQ
+        # do some data quality here
+
         # done 
     except Exception as e:
         log.error(e, exc_info=True) # includes traceback info to log
         raise e
     
     # combine `customers` & `postcodes` together 
+    try:
+        log.info("Merge customers and postcode data sources")
+        full_cust_data = merge_customers_postcodes(customers_df, postcode_df) 
+        log.info(f"Data merge complete. Result dataframe has {len(full_cust_data)} rows") 
+    except Exception as e:
+        log.error(e, exc_info=True)
+        raise e 
+
+    # create snowpark session & push dataframes `txns_df` & `full_cust_data` to snowpark
+    try:
+        log.info("=" * 150)
+        log.info("Start connection to Snowflake through SnowPark ...") 
+        snowpark = getSnowpark(snowflake_connection_details) 
+        log.info("Snowflake connection established through object `snowpark`") 
+
+        # push `full_cust_data` to snowpark & write it to stg schema 
+        log.info("push full_cust_data to snowpark")
+        full_cust_snow = snowpark.create_dataframe(full_cust_data) 
+        log.info("write full_cust_data to snowflake") 
+        write_to_snowflake(full_cust_snow, "PURCHASE_DATA_STG", "RAW_CUST_DATA")
+        log.info("data written to snowflake") 
+
+        # Now write transactions data to snowpark & snowflake 
+        log.info("push txns_df to snowpark")
+        txns_snow = snowpark.create_dataframe(txns_df) 
+        log.info("write txns_df to snowflake") 
+        write_to_snowflake(txns_snow, "PURCHASE_DATA_STG", "RAW_TXN_DATA")
+        log.info("data written to snowflake\n")
+    except Exception as e:
+        log.error(e, exc_info=True)
+        raise e 
     
-
-    
-
-    # create snowpark session 
-    #snowpark = getSnowpark(snowflake_connection_details) 
-
+    # Simple ETL pipeline complete, close snowpark & end 
+    snowpark.close() # closes snowpark session 
     log.info("End of pipeline") 
+    log.info("=" * 150)
