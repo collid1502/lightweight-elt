@@ -160,15 +160,67 @@ Now, if you log into Snowflake UI directly, you can check that these new roles a
 
 We have created a variety of snowflake objects at this point:
 
-* hold1
-* hold2
-* hold3
-
-Here are those objects
-
-<holder for picture>
+* A warehouse for the virtual compute
+* A database for the storage of the data
+* A variety of schemas for raw data, transformed/modelled data & analytics outputs
 
 We have also assigned specific privileges to the roles above, against the created objects. <br>
-We can explore those on each object.
 
-... add more details here 
+Those allow a user with the specific role group, to then use the objects/resources created (such as warehouses, databases, schemas)<br>
+
+So, to execute this infrastructure with terraform, we can do the following:
+
+```
+cd prod\resources
+
+# initialise terraform in the subdir
+terraform init
+
+# validate the configuration
+terraform validate
+
+# build the plan & check it
+terraform plan 
+
+# execute the plan & provide `yes` to the terminal when prompted 
+terraform apply 
+```
+
+
+### Snowflake Users
+
+We need to create a service acct that will perform the ETL actions. We can do that here, and assign it the `ETL_DEV` role, which will then grant it permissions to the necessary snowflake objects we created previously
+
+To create the service account user, and then assign it the ETL_DEV role, we can execute the following:
+
+```
+cd prod\users
+
+# initialise terraform in the subdir
+terraform init
+
+# validate the configuration
+terraform validate
+
+# build the plan & check it
+terraform plan 
+
+# execute the plan & provide `yes` to the terminal when prompted 
+terraform apply 
+```
+
+And that creates the service account user, with the relevant permissions to use resources as required
+
+
+So, if you login to the snowflake console, you will now be able to see, under `Users & Roles` where you will find the user **ETL_SERV_ACCT** which has the granted role of ***ETL_DEV*** which gives it access to the resources needed to perform the ETL tasks in this project! 
+
+
+## Infrastructure Teardown
+
+When you want to tear down the infra & roles & users etc. built here, you can use:
+
+```
+terraform destroy
+```
+
+within the relevant directories! 
