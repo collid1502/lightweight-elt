@@ -160,14 +160,36 @@ if __name__ == "__main__":
             raise Exception("DQ Failure for Customer Extract")
         else:
             log.info("DQ checks on Customers Extract have passed!")
+        #========================================================================================
 
         # postcodes
         log.info("Source UK Postcode data from API extraction ...") 
         postcode_df = source_uk_postcodes()
         log.info(f"Postcode data sourced. Result dataframe has {len(postcode_df)} rows")
 
-        # DQ
-        # do some data quality here
+        # DQ : do some data quality here with cuallee (on top of Pandas)
+        log.info("Running DQ checks on Postcodes Extract ...")
+        postcode_checks = Check(level=CheckLevel.ERROR, name="postcode_extract_DQ")
+        postcode_dq = (postcode_checks
+            .are_complete(["Postcode", "In Use?", "Introduced"])
+            .is_unique("Postcode")
+            .validate(postcode_df) # choose the DataFrame to validate the checks against 
+        )
+        log.info(f"\n{postcode_dq.to_string()}\n") # logs the results of DQ checks
+        # now run a check to see if any FAILS exist & raise if so 
+        postcode_dq_fails = (
+            ddb.query("""
+            SELECT 
+                SUM(CASE WHEN STATUS = 'FAIL' THEN 1 ELSE 0 END) AS DQ_FAILURES
+            FROM postcode_dq 
+            """).to_df().iloc[0, 0] # accesses the actual value 
+        )
+        if postcode_dq_fails != 0:
+            log.error("There has been a DQ failure for the extraction of postcode data")
+            raise Exception("DQ Failure for Postcode Extract")
+        else:
+            log.info("DQ checks on Postcode Extract have passed!")
+        #========================================================================================
 
         # transactions
         log.info("Source transactions data from API extraction ...")
@@ -187,10 +209,28 @@ if __name__ == "__main__":
             ).to_df() # converts result back to dataframe 
         )
 
-        # DQ
-        # do some data quality here
-
-        # done 
+        # DQ : do some data quality here with cuallee (on top of Pandas)
+        log.info("Running DQ checks on Transactions Extract ...")
+        txn_checks = Check(level=CheckLevel.ERROR, name="txn_extract_DQ")
+        txn_dq = (txn_checks
+            .are_complete(["customerID", "transaction_TS"])
+            .validate(txns_df_w_extract) # choose the DataFrame to validate the checks against 
+        )
+        log.info(f"\n{txn_dq.to_string()}\n") # logs the results of DQ checks
+        # now run a check to see if any FAILS exist & raise if so 
+        txn_dq_fails = (
+            ddb.query("""
+            SELECT 
+                SUM(CASE WHEN STATUS = 'FAIL' THEN 1 ELSE 0 END) AS DQ_FAILURES
+            FROM txn_dq 
+            """).to_df().iloc[0, 0] # accesses the actual value 
+        )
+        if txn_dq_fails != 0:
+            log.error("There has been a DQ failure for the extraction of transaction data")
+            raise Exception("DQ Failure for Transaction Extract")
+        else:
+            log.info("DQ checks on Transaction Extract have passed!")
+        #========================================================================================
     except Exception as e:
         log.error(e, exc_info=True) # includes traceback info to log
         raise e
