@@ -1,0 +1,12 @@
+macros:
+
+  - name: delete_old_data
+    description: A macro which can be called, that can wipe data from snapshot tables based upon a number of years since valid
+    arguments:
+      - name: target_table
+        type: string
+        description: This will be the table in the snapshot schema which is targeted for the deletion to occur within 
+
+      - name: years_to_delete_after
+        type: integer
+        description: Specify the number of years for which delete any records with a valid to stamp older than N years ago
