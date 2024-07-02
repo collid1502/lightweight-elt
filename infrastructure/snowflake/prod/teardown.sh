@@ -1,4 +1,6 @@
-# detsory all IaC on Snowflake by Terraform
+#!/bin/bash
+
+# detstroy all IaC on Snowflake by Terraform
 
 # run Roles
 cd ./roles 

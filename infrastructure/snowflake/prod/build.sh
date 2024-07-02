@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # build Terraform resources one by one (note, only action these having checked elements)
 
 # run Roles
