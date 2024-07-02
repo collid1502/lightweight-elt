@@ -1,20 +1,23 @@
 {% snapshot Customers %}
 
 -- Specify the configurations for this Data Model
-{{ config(
-        tags=['purchase_data_transformation'],
+-- uses the check method, checking if the below columns have changed, per the unique Key
+-- post hook can run one of more actions, after the completion of a model / snapshot run
+-- we will use this, to run a generic macro with inputs, to clear down "historic" data (5 years specified)
+-- this uses `this` to reference this model as the input argument
+{{ 
+    config(
+        tags=["purchase_data_transformation"],
         target_database='CUSTOMER_PURCHASES',
         target_schema='PURCHASE_DATA',
         unique_key='ID',
-        strategy='check', -- uses the check method, checking if the below columns have changed, per the unique Key
+        strategy='check',
         check_cols=[
-            'NAME', 'POSTCODE', 'EMAIL_ADDRESS', 'PROFESSION' 
-        ],
-
-        -- post hook can run one of more actions, after the completion of a model / snapshot run
-        -- we will use this, to run a generic macro with inputs, to clear down "historic" data (5 years specified) 
-        post_hook=["{{ delete_old_data(this, 5) }}"], -- this uses `this` to reference this model as the input argument
-) }}
+            'NAME', 'POSTCODE', 'EMAIL_ADDRESS', 'PROFESSION'
+        ], 
+        post_hook=["{{ delete_old_data(this, 5) }}"],
+    ) 
+}}
 
 -- set a VAR `run_date` (this will use run_date if it is set via CLI during a DBT build/run, else defaults to None) 
 -- for example, if needing to run backfill, could set a specific run date 
@@ -32,7 +35,7 @@ WITH CUSTOMER_SOURCE AS (
         TO_TIMESTAMP_NTZ(TRIM("dob")) AS DOB,
         TO_TIMESTAMP_NTZ(TRIM("customerJoined")) AS CUSTOMER_JOINED
     FROM {{ source('RAW', 'RAW_CUST_DATA') }} -- let's you specify which source to use from the DBT configs (sources.yml) 
-    WHERE customer_id IS NOT NULL 
+    WHERE "customerID" IS NOT NULL 
 
     {% if run_date %} -- This checks that `run_date` IS NOT EQUAL to None. And if so, use the following to compile the SQL
         AND EXTRACT_DATE = '{{ run_date }}'
