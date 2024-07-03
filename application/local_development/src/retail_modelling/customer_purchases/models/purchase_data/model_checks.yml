@@ -3,13 +3,28 @@ version: 1
 models:
 # check on the VIEWs created in `purchase_data`
   - name: Customers_vw
+    description: A view that presents a cleaned, query of the underlying Snapshot table
+    meta: {}
+    docs:
+      show: true
+      node_color: yellow
     columns:
       - name: VALID_FROM
         data_tests:
           - not_null
-
       - name: VALID_TO
         data_tests:
           - not_null 
+
+  - name: Rewards_Members_vw
+    description: A view that presents a cleaned, query of the underlying snapshot table 
+    meta: {}
+    docs:
+      show: true
+      node_color: yellow
+    columns:
+      - name: REWARDS_MEMBER
+        data_tests:
+          - not_null
 
           
