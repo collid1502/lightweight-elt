@@ -1,0 +1,15 @@
+version: 1
+
+models:
+# check on the VIEWs created in `purchase_data`
+  - name: Customers_vw
+    columns:
+      - name: VALID_FROM
+        data_tests:
+          - not_null
+
+      - name: VALID_TO
+        data_tests:
+          - not_null 
+
+          

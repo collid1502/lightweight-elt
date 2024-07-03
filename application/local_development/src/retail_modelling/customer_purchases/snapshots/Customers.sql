@@ -7,7 +7,7 @@
 -- this uses `this` to reference this model as the input argument
 {{ 
     config(
-        tags=["purchase_data_transformation"],
+        tags=["purchase_data_transformations"],
         target_database='CUSTOMER_PURCHASES',
         target_schema='PURCHASE_DATA',
         unique_key='ID',
