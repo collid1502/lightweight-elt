@@ -15,4 +15,52 @@ snapshots:
         description: the unique ID of a customer 
         data_tests:
           - not_null
-          
+
+  - name: Postcode_Details
+    description: This table is a DIM table containing information regarding UK postcodes for our customer base
+    meta: {}
+    docs:
+      show: true
+      node_color: orange
+    data_tests:
+      - no_duplicates:
+          columns: ['POSTCODE', 'DBT_VALID_FROM']
+    columns:
+      - name: POSTCODE
+        description: The unique identifier alphanumeric code for a postal area
+        data_tests:
+          - not_null 
+
+  - name: Product_Brochure
+    description: This table is a DIM table containing information regarding the product catalouge and the current sale price
+    meta: {}
+    docs:
+      show: true
+      node_color: orange
+    data_tests:
+      - no_duplicates:
+          columns: ['PRODUCT', 'DBT_VALID_FROM']
+    columns:
+      - name: PRODUCT
+        description: The unique product name from the catalouge 
+        data_tests:
+          - not_null 
+
+  - name: Rewards_Members
+    description: This table is a DIM table containing information regarding whether a customer is currently a rewards member
+    meta: {}
+    docs:
+      show: true
+      node_color: orange
+    data_tests:
+      - no_duplicates:
+          columns: ['CUSTOMER_ID', 'DBT_VALID_FROM']
+    columns:
+      - name: CUSTOMER_ID
+        description: The unique ID for determining a customer 
+        data_tests:
+          - not_null 
+      - name: REWARDS_MEMBER
+        description: Boolean flag to indicate if customer is rewards member during current time
+        data_tests:
+          - not_null 

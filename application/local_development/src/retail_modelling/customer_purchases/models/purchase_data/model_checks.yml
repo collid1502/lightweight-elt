@@ -1,6 +1,14 @@
 version: 1
 
 models:
+# Transactions FACT table created in purchase_data
+  - name: Purchases
+    description: A FACT table covers transactions made by customers buying products
+    meta: {}
+    docs:
+      show: true
+      node_color: red
+
 # check on the VIEWs created in `purchase_data`
   - name: Customers_vw
     description: A view that presents a cleaned, query of the underlying Snapshot table
@@ -23,8 +31,44 @@ models:
       show: true
       node_color: yellow
     columns:
-      - name: REWARDS_MEMBER
+      - name: VALID_FROM
+        data_tests:
+          - not_null
+      - name: VALID_TO
         data_tests:
           - not_null
 
-          
+  - name: Postcode_Details_vw
+    description: A view that presents a cleaned, query of the underlying snapshot table 
+    meta: {}
+    docs:
+      show: true
+      node_color: yellow
+    columns:
+      - name: VALID_FROM
+        data_tests:
+          - not_null
+      - name: VALID_TO
+        data_tests:
+          - not_null
+
+  - name: Purchases_vw
+    description: A view that presents a cleaned, query of the underlying snapshot table 
+    meta: {}
+    docs:
+      show: true
+      node_color: yellow
+
+  - name: Product_Brochure_vw
+    description: A view that presents a cleaned, query of the underlying snapshot table 
+    meta: {}
+    docs:
+      show: true
+      node_color: yellow
+    columns:
+      - name: VALID_FROM
+        data_tests:
+          - not_null
+      - name: VALID_TO
+        data_tests:
+          - not_null
