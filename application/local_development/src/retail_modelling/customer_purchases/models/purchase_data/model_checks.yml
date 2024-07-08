@@ -8,6 +8,13 @@ models:
     docs:
       show: true
       node_color: red
+    columns:
+      - name: TRANSACTION_TS
+        data_tests:
+            - not_null
+      - name: CUSTOMER_ID
+        data_tests:
+            - not_null
 
 # check on the VIEWs created in `purchase_data`
   - name: Customers_vw
