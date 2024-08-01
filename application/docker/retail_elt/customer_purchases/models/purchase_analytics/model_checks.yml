@@ -1,0 +1,28 @@
+version: 1
+
+models:
+  - name: yesterdays_regional_product_sales
+    description: A view which covers the previous day's sales by each region & product in the catalouge
+    meta: {}
+    docs:
+      show: true
+      node_color: blue
+    columns:
+      - name: REGION
+        data_tests:
+            - not_null
+      - name: PRODUCT
+        data_tests:
+            - not_null
+
+  - name: yesterdays_product_summaries
+    description: A view which covers the previous day's sales by each product in the catalouge
+    meta: {}
+    docs:
+      show: true
+      node_color: blue
+    columns:
+      - name: PRODUCT
+        data_tests:
+            - not_null
+            

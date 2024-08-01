@@ -1,0 +1,25 @@
+customer_purchases:
+  target: prod
+  outputs:
+    prod:
+      # use Jinja templating to pick up environment variables 
+      type: snowflake
+      account: "{{ env_var('snowflake_account') }}"
+
+      # User/password auth
+      user: etl_serv_acct
+      password: "{{ env_var('etl_serv_password') }}"
+
+      role: ETL_DEV
+      database: CUSTOMER_PURCHASES
+      warehouse: RETAIL_ETL_WH
+      schema: PURCHASE_DATA_STG
+      threads: 6
+      client_session_keep_alive: False
+
+      # optional
+      connect_retries: 0 # default 0
+      connect_timeout: 10 # default: 10
+      retry_on_database_errors: False # default: false
+      retry_all: False  # default: false
+      reuse_connections: False # default: false

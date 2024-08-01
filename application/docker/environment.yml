@@ -1,0 +1,12 @@
+# environment.yml file 
+
+name: retail_etl
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python == 3.9.19
+  - pip
+  - jupyterlab
+  - pip:
+      - -r requirements.txt

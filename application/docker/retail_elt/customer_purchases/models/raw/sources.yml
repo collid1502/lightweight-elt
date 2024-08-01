@@ -1,0 +1,14 @@
+version: 1
+
+# specifying sources 
+sources:
+  - name: RAW
+    database: CUSTOMER_PURCHASES
+    schema: PURCHASE_DATA_STG 
+    tables:
+      # specify the tables & details within this RAW staging area 
+      - name: RAW_CUST_DATA
+        description: Source table holding raw data about the customer base 
+
+      - name: RAW_TXN_DATA
+        description: Source table holding the raw (daily) transactions data from customers 

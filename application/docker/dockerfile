@@ -1,0 +1,57 @@
+# Use Amazon Linux 2 as the base image
+FROM amazonlinux:2
+
+## ----- Install basic dependencies
+# this ensures we can download required software
+# commands can be chained to execute one after the other using &&
+# the RUN instruction is used to execute commands during the build process of the docker image
+RUN yum -y update && \
+    yum -y install nano tar wget bzip2 gcc python3 && \
+    yum clean all
+
+# Install Miniconda
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
+    bash /tmp/miniconda.sh -b -p /opt/miniconda && \
+    rm /tmp/miniconda.sh
+
+# Update PATH to include Miniconda
+ENV PATH="/opt/miniconda/bin:${PATH}"
+
+# Copy environment.yml and requirements.txt into the container
+COPY environment.yml /tmp/environment.yml
+COPY requirements.txt /tmp/requirements.txt
+
+# Create a new Conda environment from environment.yml
+RUN conda env create -f /tmp/environment.yml
+
+# Install additional Python packages via pip in the activated Conda environment
+RUN /bin/bash -c "source activate retail_etl && \
+    pip install snowflake-connector-python[pandas]"
+
+## ----- Set up a working directory
+WORKDIR /app
+
+# Create directory for DBT config & copy DBT profile
+RUN mkdir -p /app/.dbt 
+COPY "./dbt_profile/profiles.yml" /app/.dbt/profiles.yml
+RUN chmod 644 /app/.dbt/profiles.yml
+
+# set the profile path env variable for DBT 
+ENV DBT_PROFILES_DIR=/app/.dbt/
+
+# Copy application files
+COPY "./retail_etl" /app/retail_etl
+COPY "./retail_elt" /app/retail_elt 
+
+# copy run_pipeline.sh script 
+COPY run_pipeline.sh /app/ 
+
+
+# setup environment variables
+# start by using ARGs, to collect details at docker initiation then set ARG values to ENV variables 
+ARG snowflake_account
+ARG etl_serv_password
+ENV snowflake_account=$snowflake_account
+ENV etl_serv_password=$etl_serv_password
+
+# EOF 

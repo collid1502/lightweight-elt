@@ -1,0 +1,23 @@
+macros:
+
+  - name: delete_old_data
+    description: A macro which can be called, that can wipe data from snapshot tables based upon a number of years since valid
+    arguments:
+      - name: target_table
+        type: string
+        description: This will be the table in the snapshot schema which is targeted for the deletion to occur within 
+
+      - name: years_to_delete_after
+        type: integer
+        description: Specify the number of years for which delete any records with a valid to stamp older than N years ago
+
+  - name: no_duplicates
+    description: A macro which allows for testing a model/table to ensure no duplicates exists for a list of columns combinations
+    arguments:
+      - name: model 
+        type: string
+        description: This is the model the test should operate on 
+
+      - name: columns
+        type: list
+        description: This is a list of strings (column names) which no duplicates should exist across in combination

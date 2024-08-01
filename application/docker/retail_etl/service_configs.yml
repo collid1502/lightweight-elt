@@ -1,0 +1,9 @@
+# configs for ETL
+snowflake:
+  account: ~~~~~~~~~~~~~~~~~~~~ # will be sourced via Environment variable
+  user: etl_serv_acct
+  password: ~~~~~~~~~~~~~~~~~~~~ # will be sourced via Environment variable
+  role: ETL_DEV
+  warehouse: RETAIL_ETL_WH
+  database: CUSTOMER_PURCHASES
+  schema: PURCHASE_DATA_STG 
