@@ -1,1 +1,0 @@
-docker run -it retail_etl_app:v2

@@ -26,7 +26,7 @@ RUN conda env create -f /tmp/environment.yml
 
 # Install additional Python packages via pip in the activated Conda environment
 RUN /bin/bash -c "source activate retail_etl && \
-    pip install snowflake-connector-python[pandas]"
+    pip install snowflake-connector-python[pandas]==3.10.1"
 
 ## ----- Set up a working directory
 WORKDIR /app
@@ -54,4 +54,6 @@ ARG etl_serv_password
 ENV snowflake_account=$snowflake_account
 ENV etl_serv_password=$etl_serv_password
 
+# execute the run_pipeline.sh script which orchestrates the ETL & ELT sections of this application 
+#CMD ["/bin/bash", "/app/run_pipeline.sh"] 
 # EOF 

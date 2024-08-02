@@ -12,4 +12,4 @@
 docker build \
     --build-arg snowflake_account=$snowflake_account \
     --build-arg etl_serv_password=$etl_serv_password \
-    -t retail_etl_app:v2 -f ./dockerfile .
+    -t retail_etl_app:v5 -f ./dockerfile .
