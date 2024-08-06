@@ -2,6 +2,9 @@
 
 # build Terraform resources one by one (note, only action these having checked elements)
 
+# ensure formatting in all .tf files (in all sub-dirs)
+terraform fmt -recursive
+
 # run Roles
 cd ./roles 
 terraform validate
