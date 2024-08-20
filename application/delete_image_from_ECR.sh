@@ -1,3 +1,5 @@
+#!/bin/bash  
+
 # authenticate
 aws ecr \
     get-login-password --region $TF_VAR_AWS_DEFAULT_REGION | docker login --username \

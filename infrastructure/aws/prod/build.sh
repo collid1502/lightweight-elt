@@ -7,3 +7,8 @@ terraform fmt -recursive
 terraform validate
 terraform plan 
 terraform apply -auto-approve 
+
+echo ""
+echo "=============================================="
+echo "All resources have been successfully created"
+echo "=============================================="

@@ -8,5 +8,6 @@ variable "AWS_SECRET_ACCESS_KEY" {
   type = string
 }
 variable "AWS_DEFAULT_REGION" {
-  type = string
+  type    = string
+  default = "eu-west-2" # this is the London Region
 }
