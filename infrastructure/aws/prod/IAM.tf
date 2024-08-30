@@ -16,25 +16,25 @@ resource "aws_iam_role" "batch_service_role" {
         }
       },
       {
-        "Effect": "Allow",
-        "Principal": {
-            "Service": "scheduler.amazonaws.com" // This builds a trust relationship for AWS EventBridge to execute the AWS Batch
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "scheduler.amazonaws.com" // This builds a trust relationship for AWS EventBridge to execute the AWS Batch
         },
-        "Action": "sts:AssumeRole"
+        "Action" : "sts:AssumeRole"
       },
       {
-        "Effect": "Allow",
-        "Principal": {
-            "Service": "ecs.amazonaws.com" // Allows ECS to assume the AWS Batch role via Trust an execute as required
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "ecs.amazonaws.com" // Allows ECS to assume the AWS Batch role via Trust an execute as required
         },
-        "Action": "sts:AssumeRole"
+        "Action" : "sts:AssumeRole"
       },
       {
-        "Effect": "Allow",
-        "Principal": {
-            "Service": "ecs-tasks.amazonaws.com" // Allows ECS tasks permission to assume AWS Batch role
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "ecs-tasks.amazonaws.com" // Allows ECS tasks permission to assume AWS Batch role
         },
-        "Action": "sts:AssumeRole"
+        "Action" : "sts:AssumeRole"
       }
     ]
   })
@@ -55,6 +55,14 @@ resource "aws_iam_role_policy_attachment" "batch_ecr_read_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 # this policy is so the AWS Batch role has permission to read images from an ECR repo on AWS 
+
+# resource attaches a managed policy to the IAM role
+resource "aws_iam_role_policy_attachment" "batch_cloudwatch_policy" {
+  role       = aws_iam_role.batch_service_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+}
+# this policy is so the AWS Batch role has permission to have full access on cloud watch logs 
+
 
 resource "aws_iam_role_policy_attachment" "ecs_admin_role_policy" {
   role       = aws_iam_role.batch_service_role.name

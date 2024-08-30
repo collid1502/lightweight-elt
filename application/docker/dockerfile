@@ -45,7 +45,7 @@ COPY "./retail_elt" /app/retail_elt
 
 # copy run_pipeline.sh script 
 COPY run_pipeline.sh /app/ 
-
+COPY run_app_unit_tests_image.sh /app/
 
 # setup environment variables
 # start by using ARGs, to collect details at docker initiation then set ARG values to ENV variables 
@@ -53,6 +53,10 @@ ARG snowflake_account
 ARG etl_serv_password
 ENV snowflake_account=$snowflake_account
 ENV etl_serv_password=$etl_serv_password
+
+# Ensure the script(s) is executable
+RUN chmod +x /app/run_pipeline.sh
+RUN chmod +x /app/run_app_unit_tests_image.sh
 
 # execute the run_pipeline.sh script which orchestrates the ETL & ELT sections of this application 
 #CMD ["/bin/bash", "/app/run_pipeline.sh"] 

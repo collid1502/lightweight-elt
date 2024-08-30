@@ -4,7 +4,7 @@
 # That repo will have been created through Terraform 
 
 # change to the directory where the dockerfile is, and build the image
-#cd ./application/docker/
+cd ./application/docker/
 
 # Authenticate Docker to ECR on AWS 
 # The aws ecr get-login-password command itself retrieves a temporary authentication token from AWS, 

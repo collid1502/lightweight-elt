@@ -17,6 +17,9 @@ aws batch register-job-definition \
         "command": ["bash", "-c", "/app/run_pipeline.sh"],
         "jobRoleArn": "arn:aws:iam::503289723064:role/AWSBatchServiceRole",
         "executionRoleArn": "arn:aws:iam::503289723064:role/AWSBatchServiceRole",
+        "networkConfiguration": {
+            "assignPublicIp": "ENABLED"
+        },
         "fargatePlatformConfiguration": {
             "platformVersion": "LATEST"
         }
