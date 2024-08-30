@@ -17,3 +17,7 @@ cd ./users
 terraform destroy -auto-approve 
 
 cd .. # back to main folder 
+echo ""
+echo "========================================================="
+echo "All Snowflake resources have been successfully destroyed"
+echo "========================================================="

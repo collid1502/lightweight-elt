@@ -7,11 +7,13 @@
 aws batch register-job-definition \
     --job-definition-name retail-de-elt \
     --type container \
-    --platformCapabilities FARGATE \
+    --platform-capabilities FARGATE \
     --container-properties '{
         "image": "'"$AWS_ACCT_ID"'.dkr.ecr.'"$TF_VAR_AWS_DEFAULT_REGION"'.amazonaws.com/retail-de-repo:etl_app_v1", 
-        "vcpus": 4, 
-        "memory": 10240,
+        "resourceRequirements": [
+                {"type": "VCPU", "value": "4"},
+                {"type": "MEMORY", "value": "10240"}
+            ],
         "command": ["bash", "-c", "/app/run_pipeline.sh"],
         "jobRoleArn": "arn:aws:iam::503289723064:role/AWSBatchServiceRole",
         "executionRoleArn": "arn:aws:iam::503289723064:role/AWSBatchServiceRole",

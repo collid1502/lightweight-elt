@@ -14,6 +14,27 @@ resource "aws_iam_role" "batch_service_role" {
         Principal = {
           Service = "batch.amazonaws.com" // In this case, the principal is batch.amazonaws.com, which means that the AWS Batch service can assume this role
         }
+      },
+      {
+        "Effect": "Allow",
+        "Principal": {
+            "Service": "scheduler.amazonaws.com" // This builds a trust relationship for AWS EventBridge to execute the AWS Batch
+        },
+        "Action": "sts:AssumeRole"
+      },
+      {
+        "Effect": "Allow",
+        "Principal": {
+            "Service": "ecs.amazonaws.com" // Allows ECS to assume the AWS Batch role via Trust an execute as required
+        },
+        "Action": "sts:AssumeRole"
+      },
+      {
+        "Effect": "Allow",
+        "Principal": {
+            "Service": "ecs-tasks.amazonaws.com" // Allows ECS tasks permission to assume AWS Batch role
+        },
+        "Action": "sts:AssumeRole"
       }
     ]
   })
@@ -28,6 +49,12 @@ resource "aws_iam_role_policy_attachment" "batch_full_policy" {
 # This policy grants the AWS Batch service the full permissions it needs to operate, such as the ability to 
 # create and manage resources like ECS clusters, tasks, and job definitions
 
+# resource attaches a managed policy to the IAM role
+resource "aws_iam_role_policy_attachment" "batch_ecr_read_policy" {
+  role       = aws_iam_role.batch_service_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+# this policy is so the AWS Batch role has permission to read images from an ECR repo on AWS 
 
 resource "aws_iam_role_policy_attachment" "ecs_admin_role_policy" {
   role       = aws_iam_role.batch_service_role.name

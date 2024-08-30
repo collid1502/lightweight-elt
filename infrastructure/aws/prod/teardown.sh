@@ -13,6 +13,6 @@ terraform destroy --target aws_ecr_repository.Retail_DE_Repository -auto-approve
 terraform destroy -auto-approve 
 
 echo ""
-echo "=============================================="
-echo "All resources have been successfully destroyed"
-echo "=============================================="
+echo "==================================================="
+echo "All AWS resources have been successfully destroyed"
+echo "==================================================="
