@@ -3,7 +3,7 @@
 # This script is designed to create a AWS batch job to run on the AWS compute environment we 
 # created as part of the AWS infrastructure via Terraform 
 
-# stage 1 - Create a Job Definition which uses the Docker Image uploaded to AWS ECR
+# Create a Job Definition which uses the Docker Image uploaded to AWS ECR
 aws batch register-job-definition \
     --job-definition-name retail-de-elt \
     --type container \

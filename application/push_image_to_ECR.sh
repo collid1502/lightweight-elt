@@ -31,6 +31,5 @@ docker tag retail_etl_app:aws_v1 $AWS_ACCT_ID.dkr.ecr.$TF_VAR_AWS_DEFAULT_REGION
 # now, push that image to ECR
 docker push $AWS_ACCT_ID.dkr.ecr.$TF_VAR_AWS_DEFAULT_REGION.amazonaws.com/retail-de-repo:etl_app_v1
 
-cd ..
-cd ..
+cd ../..
 # Now, log into the AWS console & check the private repository to see oif the docker image had been uploaded

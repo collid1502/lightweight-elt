@@ -35,6 +35,20 @@ resource "aws_iam_role" "batch_service_role" {
           "Service" : "ecs-tasks.amazonaws.com" // Allows ECS tasks permission to assume AWS Batch role
         },
         "Action" : "sts:AssumeRole"
+      },
+      {
+        "Effect": "Allow",
+        "Principal": {
+            "Service": "states.amazonaws.com" // Allows Step Function State Machines to assume AWS Batch role
+        },
+        "Action": "sts:AssumeRole"
+      },
+      {
+        "Effect": "Allow",
+        "Principal": {
+            "Service": "events.amazonaws.com" // Allows event scheduler to use the AWS Batch role 
+        },
+        "Action": "sts:AssumeRole"
       }
     ]
   })
@@ -63,6 +77,11 @@ resource "aws_iam_role_policy_attachment" "batch_cloudwatch_policy" {
 }
 # this policy is so the AWS Batch role has permission to have full access on cloud watch logs 
 
+# attach policy for step function 
+resource "aws_iam_role_policy_attachment" "step_function_policy" {
+  role       = aws_iam_role.batch_service_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess"
+}
 
 resource "aws_iam_role_policy_attachment" "ecs_admin_role_policy" {
   role       = aws_iam_role.batch_service_role.name

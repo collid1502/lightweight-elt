@@ -1,0 +1,17 @@
+{
+    "Comment": "A Step Function that triggers the Retail ALT AWS Batch job",
+    "StartAt": "SubmitBatchJob",
+    "States": {
+      "SubmitBatchJob": {
+        "Type": "Task",
+        "Resource": "arn:aws:states:::batch:submitJob.sync",
+        "Parameters": {
+          "JobDefinition": "arn:aws:batch:eu-west-2:503289723064:job-definition/retail-de-elt:6",
+          "JobName": "Retail-ELT-daily-batch-job",
+          "JobQueue": "arn:aws:batch:eu-west-2:503289723064:job-queue/retail-fargate-job-queue"
+        },
+        "End": true
+      }
+    }
+  }
+  
